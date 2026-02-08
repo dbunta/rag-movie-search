@@ -40,6 +40,20 @@ class InvertedIndex:
         term_match_doc_count = len(self.index[tokens[0]])
         return math.log((total_doc_count + 1) / (term_match_doc_count + 1))
 
+    def get_tfidf(self, doc_id:int, term:str):
+        return self.get_tf(doc_id, term) * self.get_idf(term)
+
+    def get_bm25_idf(self, term:str) -> float:
+        # log((N - df + 0.5) / (df + 0.5) + 1)
+        # N = total number of documents 
+        # df = document frequency
+        tokens = tokenize_text(term, self.stopwords)
+        if len(tokens) > 1:
+            raise "Unexpected number of tokens"
+        N = len(self.docmap)
+        df = len(self.index[tokens[0]])
+        return math.log((N - df + 0.5) / (df + 0.5) + 1)
+
     def get_documents(self, term:str):
         term = term.lower()
         if term in self.index:

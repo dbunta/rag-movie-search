@@ -12,12 +12,19 @@ def main() -> None:
 
     subparsers.add_parser("build", help="")
 
-    term_frequency_parser = subparsers.add_parser("tf", help="")
-    term_frequency_parser.add_argument("document_id", type=int)
-    term_frequency_parser.add_argument("term", type=str)
+    tf_parser = subparsers.add_parser("tf", help="")
+    tf_parser.add_argument("document_id", type=int)
+    tf_parser.add_argument("term", type=str)
 
     idf_parser = subparsers.add_parser("idf", help="inverse document frequency")
     idf_parser.add_argument("term", type=str)
+
+    tfidf_parser = subparsers.add_parser("tfidf", help="")
+    tfidf_parser.add_argument("document_id", type=int)
+    tfidf_parser.add_argument("term", type=str)
+
+    bm25_idf_parser = subparsers.add_parser("bm25idf", help="")
+    bm25_idf_parser.add_argument("term", type=str)
 
     test_parser = subparsers.add_parser("test", help="")
 
@@ -49,6 +56,16 @@ def main() -> None:
             ii.load()
             idf = ii.get_idf(args.term)
             print(f"Inverse document frequency of '{args.term}': {idf:.2f}")
+        case "tfidf":
+            ii = InvertedIndex()
+            ii.load()
+            tf_idf = ii.get_tfidf(args.document_id, args.term)
+            print(f"TF-IDF score of '{args.term}' in document '{args.document_id}': {tf_idf:.2f}")
+        case "bm25idf":
+            ii = InvertedIndex()
+            ii.load()
+            bm25idf = ii.get_bm25_idf(args.term)
+            print(f"BM25 IDF score of '{args.term}': {bm25idf:.2f}")
         case "test":
             ii = InvertedIndex()
             ii.load()
