@@ -1,3 +1,4 @@
+import math
 import pickle
 from typing import Counter
 from lib.search_utils import *
@@ -31,6 +32,13 @@ class InvertedIndex:
             return 0
         return counter[tokens[0]]
 
+    def get_idf(self, term:str):
+        tokens = tokenize_text(term, self.stopwords)
+        if len(tokens) > 1:
+            raise "Unexpected number of tokens"
+        total_doc_count = len(self.docmap)
+        term_match_doc_count = len(self.index[tokens[0]])
+        return math.log((total_doc_count + 1) / (term_match_doc_count + 1))
 
     def get_documents(self, term:str):
         term = term.lower()
