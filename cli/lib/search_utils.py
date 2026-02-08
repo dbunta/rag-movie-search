@@ -11,16 +11,21 @@ CACHE_DIR = os.path.join(PROJECT_ROOT, "cache")
 INDEX_PATH = os.path.join(CACHE_DIR, "index.pkl")
 DOCMAP_PATH = os.path.join(CACHE_DIR, "docmap.pkl")
 
-def search_movie_data(search_term:str, movies:list):
+def search_movie_data(search_term:str, movies_index:dict, movies:dict):
     stopwords = load_text_from_file(DATA_PATH)
     search_tokens = tokenize_text(search_term, stopwords)
     results = []
-    for m in movies:
-        movie_tokens = tokenize_text(m['title'], stopwords)
-        for st in search_tokens:
-            if any(st in mt for mt in movie_tokens):
-                results.append(m)
-                break
+    ids = set()
+
+    # get movie ids with a match
+    for token in search_tokens:
+        if token in movies_index:
+            movie_ids = movies_index[token]
+            for id in movie_ids:
+                ids.add(id)
+                results.append(movies[id])
+                if len(results) >= 5:
+                    return results
     return results
 
 def tokenize_text(text:str, stopwords:list) -> set:
