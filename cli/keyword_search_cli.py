@@ -12,6 +12,10 @@ def main() -> None:
 
     build_parser = subparsers.add_parser("build", help="")
 
+    term_frequency_parser = subparsers.add_parser("tf", help="")
+    term_frequency_parser.add_argument("document_id", type=int)
+    term_frequency_parser.add_argument("term", type=str)
+
     test_parser = subparsers.add_parser("test", help="")
 
     args = parser.parse_args()
@@ -25,29 +29,22 @@ def main() -> None:
             print(f"Searching for: {args.query}")
             ii = InvertedIndex()
             ii.load()
-            search_results = search_movie_data(args.query, ii.index, ii.docmap)
-            # search_results = search_movie_data(args.query, documents["movies"])
+            search_results = search_movie_data(args.query, ii.index, ii.docmap, 5)
             print_movie_data(search_results)
         case "build":
             print(f"Buliding inverted index for {DATA_PATH}")
             ii = InvertedIndex()
             ii.build()
             ii.save()
-            # docs = ii.get_documents("merida")
-            # print(f"First document for term 'merida' = {docs[0]}")
+        case "tf":
+            ii = InvertedIndex()
+            ii.load()
+            count = ii.get_tf(args.document_id, args.term)
+            print(count)
         case "test":
             ii = InvertedIndex()
             ii.load()
-            # test = ii.get_documents("merida")
-            # print(ii.index)
-            # print('merida' in ii.index)
-            # if 'merida' in ii.index:
-            #     print(sorted(ii.index['merida']))
-            # print(ii.index)
             print(ii.index["brave"])
-            # for t in ii.index:
-            #     print(t)
-            pass
         case _:
             parser.print_help()
 

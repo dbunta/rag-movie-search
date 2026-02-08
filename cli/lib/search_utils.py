@@ -10,8 +10,9 @@ STOPWORDS_PATH = os.path.join(PROJECT_ROOT, "data", "stopwords.txt")
 CACHE_DIR = os.path.join(PROJECT_ROOT, "cache")
 INDEX_PATH = os.path.join(CACHE_DIR, "index.pkl")
 DOCMAP_PATH = os.path.join(CACHE_DIR, "docmap.pkl")
+TERM_FREQUENCIES_PATH = os.path.join(CACHE_DIR, "term_frequencies.pkl")
 
-def search_movie_data(search_term:str, movies_index:dict, movies:dict):
+def search_movie_data(search_term:str, movies_index:dict, movies:dict, limit:int):
     stopwords = load_text_from_file(DATA_PATH)
     search_tokens = tokenize_text(search_term, stopwords)
     results = []
@@ -24,11 +25,11 @@ def search_movie_data(search_term:str, movies_index:dict, movies:dict):
             for id in movie_ids:
                 ids.add(id)
                 results.append(movies[id])
-                if len(results) >= 5:
+                if len(results) >= limit:
                     return results
     return results
 
-def tokenize_text(text:str, stopwords:list) -> set:
+def tokenize_text(text:str, stopwords:list) -> list[str]:
     # preprocess text
     text = text.lower()
     punctuation_trans = text.maketrans(dict.fromkeys(string.punctuation, ''))
